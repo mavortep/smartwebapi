@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using WebApiSmartv2.Abstract;
 using WebApiSmartv2.DTO;
 using WebApiSmartv2.Infrastructure;
 
@@ -11,6 +12,18 @@ namespace WebApiSmartv2.Controllers
 {
     public class ProductsController : ApiController
     {
+        private IProductRepository repository;
+
+        public ProductsController()
+        {
+
+        }
+
+        public ProductsController(IProductRepository repo)
+        {
+            repository = repo;
+        }
+        
         //Get list of products
         public IQueryable<ProductDTO> Get()
         {
