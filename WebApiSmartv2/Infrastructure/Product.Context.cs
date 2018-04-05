@@ -25,6 +25,7 @@ namespace WebApiSmartv2.Infrastructure
             throw new UnintentionalCodeFirstException();
         }
     
+        public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<Product> Products { get; set; }
     }
 }

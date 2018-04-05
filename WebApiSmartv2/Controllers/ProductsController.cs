@@ -4,42 +4,41 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using WebApiSmartv2.DTO;
 using WebApiSmartv2.Infrastructure;
 
 namespace WebApiSmartv2.Controllers
 {
     public class ProductsController : ApiController
     {
-        public IEnumerable<Product> Get()
+        //Get list of products
+        public IQueryable<ProductDTO> Get()
         {
-            using (ApiProductsEntities db = new ApiProductsEntities())
-            {
-                return db.Products.ToList();
-            }
+            ApiProductsEntities db = new ApiProductsEntities();
+
+            var query = from product in db.Products
+                         join category in db.Categories on product.CategoryId equals category.Id
+                         select new ProductDTO { Id = product.Id, Name = product.Name, Price = product.Price, Description = product.Description, Category = category.Name };
+
+            return query;
         }
 
-        public Product Get(Guid id)
+        //Get product info by id (3)
+        public ProductDTO Get(Guid id)
         {
             using (ApiProductsEntities db = new ApiProductsEntities())
             {
-                return db.Products.FirstOrDefault(x => x.Id == id);
-            }
-        }
+                var query = (from product in db.Products
+                            join category in db.Categories on product.CategoryId equals category.Id
+                            select new ProductDTO
+                            { Id = product.Id,
+                              Name = product.Name,
+                              Price = product.Price,
+                              Description = product.Description,
+                              Category = category.Name
+                            }).FirstOrDefault(x => x.Id == id);
 
-        //[Route("customers/orders")]
-        //public IEnumerable<Product> GetCategory()
-        //{
-        //    using (ApiProductsEntities db = new ApiProductsEntities())
-        //    {
-        //        return db.Products.OrderBy(x => x.Category).Select(x => x);
-        //    }
-        //}
-
-        public IEnumerable<Product> Get(string category)
-        {
-            using (ApiProductsEntities db = new ApiProductsEntities())
-            {
-                return db.Products.Where(x => x.Category == category).Select(x => x).ToList();
+                return query;
             }
         }
     }
